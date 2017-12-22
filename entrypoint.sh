@@ -45,6 +45,9 @@ main() {
         --awssecretaccesskey)
             OPTION_AWSSECRETACCESSKEY="${VALUE}"
             ;;
+        --iamrole)
+            OPTION_IAMROLE="${VALUE}"
+            ;;
         --s3bucketname)
             OPTION_S3BUCKETNAME="${VALUE}"
             ;;
@@ -71,6 +74,7 @@ main() {
   S3BUCKETPATH="${OPTION_S3BUCKETPATH:-/}"
   SSHUSER="${OPTION_SSHUSER:-$S3BUCKETNAME}"
   SSHPUBKEY="${OPTION_SSHPUBKEY:-unset}"
+  IAMROLE="${IAMROLE:-unset}"
 
   if [ "$S3BUCKETNAME" = "unset" ]; then
     echo "--s3bucketname unset"
@@ -80,6 +84,12 @@ main() {
   if [ "$SSHPUBKEY" = "unset" ]; then
     echo "--sshpubkey unset"
     usage
+  fi
+
+  if [ "$IAMROLE" = "unset" ]; then
+    S3FSOPTIONS="allow_other"
+  else
+    S3FSOPTIONS="allow_other,iam_role=${IAMROLE}"
   fi
 
   log "Generate host keys"
@@ -100,9 +110,9 @@ main() {
   chown -R ${SSHUSER}:${SSHUSER} /home/${SSHUSER}
 
   log "Mount s3 bucket"
-  echo s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" /mnt/${S3BUCKETNAME} -f -o allow_other
+  echo s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" /mnt/${S3BUCKETNAME} -f -o ${S3FSOPTIONS}
   mkdir -p /mnt/${S3BUCKETNAME}
-  s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" /mnt/${S3BUCKETNAME} -f -o allow_other &
+  s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" /mnt/${S3BUCKETNAME} -f -o ${S3FSOPTIONS} &
   S3FS_PID=$!
 
   log "Start sshd daemon"
