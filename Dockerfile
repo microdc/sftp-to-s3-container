@@ -16,8 +16,8 @@ RUN apt-get install -y automake \
                        curl \
                        tar
 
-RUN curl -L https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.82.tar.gz | tar xvz -C /usr/src
-RUN cd /usr/src/s3fs-fuse-1.82 && ./autogen.sh && ./configure --prefix=/usr && make && make install
+RUN curl -L https://github.com/s3fs-fuse/s3fs-fuse/archive/v1.83.tar.gz | tar xvz -C /usr/src
+RUN cd /usr/src/s3fs-fuse-1.83 && ./autogen.sh && ./configure --prefix=/usr && make && make install
 
 RUN chmod -R 755 /mnt
 
