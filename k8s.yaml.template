@@ -1,0 +1,72 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: ${APPNAME}
+  name: ${APPNAME}
+  namespace: apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${APPNAME}
+  template:
+    metadata:
+      labels:
+        app: ${APPNAME}
+      annotations:
+        iam.amazonaws.com/role: ${ENVIRONMENT}.${APPNAME}
+    spec:
+      containers:
+      - name: api
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        image: equalexpertsmicrodc/sftp-to-s3-container:development
+        imagePullPolicy: Always
+        command:
+          - "/usr/local/bin/entrypoint.sh"
+        args:
+          - "--s3bucketname=$(S3BUCKETNAME)"
+          - "--sshpubkey=\"$(SSHPUBKEY)\""
+          - "--iamrole=$(IAMROLE)"
+        env:
+          - name: S3BUCKETNAME
+            value: ${S3BUCKETNAME}
+          - name: SSHPUBKEY
+            value: ${SSHPUBKEY}
+          - name: IAMROLE
+            value: "${ENVIRONMENT}.${APPNAME}"
+        ports:
+        - containerPort: 22
+        readinessProbe:
+          exec:
+            command:
+            - ls
+            - /mnt/${S3BUCKETNAME}
+          initialDelaySeconds: 30
+          periodSeconds: 60
+        livenessProbe:
+          tcpSocket:
+            port: 22
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: ${APPNAME}
+  name: ${APPNAME}
+  namespace: apps
+spec:
+  selector:
+    app: ${APPNAME}
+  ports:
+  - port: 2222
+    name: sftp
+    protocol: TCP
+    targetPort: 22
