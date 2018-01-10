@@ -70,3 +70,4 @@ spec:
     name: sftp
     protocol: TCP
     targetPort: 22
+  type: LoadBalancer
