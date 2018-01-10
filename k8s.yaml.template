@@ -31,7 +31,7 @@ spec:
           - "/usr/local/bin/entrypoint.sh"
         args:
           - "--s3bucketname=$(S3BUCKETNAME)"
-          - "--sshpubkey=\"$(SSHPUBKEY)\""
+          - "--sshpubkey=$(SSHPUBKEY)"
           - "--iamrole=$(IAMROLE)"
         env:
           - name: S3BUCKETNAME
