@@ -32,8 +32,8 @@ usage() {
 main() {
 
   while [ "$1" != "" ]; do
-    PARAM="$(echo $1 | awk -F= '{print $1}')"
-    VALUE="$(echo $1 | awk -F= '{print $2}')"
+    PARAM=$(echo "$1" | awk -F= '{print $1}')
+    VALUE=$(echo "$1" | awk -F= '{print $2}')
     case $PARAM in
         -h | --help)
             usage
@@ -68,13 +68,13 @@ main() {
     shift
   done
 
-  AWSACCESSKEYID="${OPTION_AWSACCESSKEYID:-unset}"
-  AWSSECRETACCESSKEY="${OPTION_AWSSECRETACCESSKEY:-unset}"
-  S3BUCKETNAME="${OPTION_S3BUCKETNAME:-unset}"
-  S3BUCKETPATH="${OPTION_S3BUCKETPATH:-/}"
-  SSHUSER="${OPTION_SSHUSER:-$S3BUCKETNAME}"
-  SSHPUBKEY="${OPTION_SSHPUBKEY:-unset}"
-  IAMROLE="${IAMROLE:-unset}"
+  export AWSACCESSKEYID="${OPTION_AWSACCESSKEYID:-unset}"
+  export AWSSECRETACCESSKEY="${OPTION_AWSSECRETACCESSKEY:-unset}"
+  export S3BUCKETNAME="${OPTION_S3BUCKETNAME:-unset}"
+  export S3BUCKETPATH="${OPTION_S3BUCKETPATH:-/}"
+  export SSHUSER="${OPTION_SSHUSER:-$S3BUCKETNAME}"
+  export SSHPUBKEY="${OPTION_SSHPUBKEY:-unset}"
+  export IAMROLE="${OPTION_IAMROLE:-unset}"
 
   if [ "$S3BUCKETNAME" = "unset" ]; then
     echo "--s3bucketname unset"
@@ -99,27 +99,27 @@ main() {
   useradd -m -s /bin/false "${SSHUSER}" || err "Fail to create ${SSHUSER}"
 
   log "Create ssh directory in user home"
-  mkdir -vp /home/${SSHUSER}/.ssh/ || err "Failed to create dir"
+  mkdir -vp "/home/${SSHUSER}/.ssh/" || err "Failed to create dir"
 
   log "Create ssh pub key file"
-  echo "${SSHPUBKEY}" > /home/${SSHUSER}/.ssh/authorized_keys || err "Failed to create ssh pub key file"
+  echo "${SSHPUBKEY}" > "/home/${SSHUSER}/.ssh/authorized_keys" || err "Failed to create ssh pub key file"
 
   log "Set home directory ownership and perms"
-  chmod 700 /home/${SSHUSER}/.ssh
-  chmod 600 /home/${SSHUSER}/.ssh/authorized_keys
-  chown -R ${SSHUSER}:${SSHUSER} /home/${SSHUSER}
+  chmod 700 "/home/${SSHUSER}/.ssh"
+  chmod 600 "/home/${SSHUSER}/.ssh/authorized_keys"
+  chown -R "${SSHUSER}:${SSHUSER}" "/home/${SSHUSER}"
 
   log "Mount s3 bucket"
-  echo s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" /mnt/${S3BUCKETNAME} -f -o ${S3FSOPTIONS}
-  mkdir -p /mnt/${S3BUCKETNAME}
-  s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" /mnt/${S3BUCKETNAME} -f -o ${S3FSOPTIONS} &
+  echo s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" "/mnt/${S3BUCKETNAME}" -f -o "${S3FSOPTIONS}"
+  mkdir -p "/mnt/${S3BUCKETNAME}"
+  s3fs "${S3BUCKETNAME}:${S3BUCKETPATH}" "/mnt/${S3BUCKETNAME}" -f -o "${S3FSOPTIONS}" &
   S3FS_PID=$!
 
   log "Start sshd daemon"
   exec /usr/sbin/sshd -D -e &
   SSHD_PID=$!
 
-  while kill -0 $S3FS_PID && kill -0 $SSHD_PID; do sleep 5; done
+  while kill -0 "${S3FS_PID}" && kill -0 "${SSHD_PID}"; do sleep 5; done
 
 }
 
