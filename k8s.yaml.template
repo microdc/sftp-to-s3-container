@@ -62,6 +62,8 @@ metadata:
     app: ${APPNAME}
   name: ${APPNAME}
   namespace: apps
+  annotations:
+  dns.alpha.kubernetes.io/external: ${APP}
 spec:
   selector:
     app: ${APPNAME}
