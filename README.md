@@ -18,7 +18,7 @@ docker run -it --name sftp -p 9999:22 --privileged equalexpertsmicrodc/sftp-to-s
 sftp -P 9999 -i ~/.ssh/id_rsa my_bucket_name@localhost
 ```
 
-## Kubernetes deployment
+## Kubernetes deployment (KOPS on AWS)
 ```
 export APPNAME=sftp-to-s3
 export ENVIRONMENT=dev
