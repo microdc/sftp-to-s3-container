@@ -26,3 +26,7 @@ export S3BUCKETNAME=test-bucket
 export SSHPUBKEY="$(cat /Users/alanplatt/.ssh/id_rsa.pub)"
 kubectl apply -f <(cat k8s.yaml.template | envsubst)
 ```
+
+# TODO
+* When the container dies the host key changes.  This may get annoying.
+* Not run with privileged mode - sffs currently requires this
