@@ -25,7 +25,7 @@ spec:
           capabilities:
             add:
               - SYS_ADMIN
-        image: equalexpertsmicrodc/sftp-to-s3-container:development
+        image: microdc/sftp-to-s3-container:development
         imagePullPolicy: Always
         command:
           - "/usr/local/bin/entrypoint.sh"

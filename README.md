@@ -1,16 +1,16 @@
 # sftp-to-s3-container
 A container that takes sftp uploads and deposits them in a mounted s3 bucket via fuse s3fs.
 
-Available on [Docker hub](https://hub.docker.com/r/equalexpertsmicrodc/sftp-to-s3-container/)
+Available on [Docker hub](https://hub.docker.com/r/microdc/sftp-to-s3-container/)
 
 ### Build
 ```
-docker build --rm -t equalexpertsmicrodc/sftp-to-s3-container:latest .
+docker build --rm -t microdc/sftp-to-s3-container:latest .
 ```
 
 ### Run example
 ```
-docker run -it --name sftp -p 9999:22 --privileged equalexpertsmicrodc/sftp-to-s3-container:latest --s3bucketname=my_bucket_name --sshpubkey="$(cat /Users/alanplatt/.ssh/id_rsa.pub)" --awsaccesskeyid=$KEY --awssecretaccesskey=$SECRET_KEY
+docker run -it --name sftp -p 9999:22 --privileged microdc/sftp-to-s3-container:latest --s3bucketname=my_bucket_name --sshpubkey="$(cat /Users/alanplatt/.ssh/id_rsa.pub)" --awsaccesskeyid=$KEY --awssecretaccesskey=$SECRET_KEY
 ```
 
 ### Use with sftp command line tool
